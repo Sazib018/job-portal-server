@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors());
@@ -29,11 +29,18 @@ async function run() {
             res.send(result)
         })
 
+        app.get("/jobs/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await JobsCollections.findOne(query);
+            res.send(result);
+        });
+
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
     }
 }
-run();
+run().catch(console.dir);
 
 
 app.listen(port, () => {
