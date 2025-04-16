@@ -36,6 +36,12 @@ async function run() {
             res.send(result);
         });
 
+        app.post("/jobs", async (req, res) => {
+            const data = req.body;
+            const result = await JobsCollections.insertOne(data);
+            res.send(result);
+          });
+
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
     }
