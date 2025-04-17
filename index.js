@@ -9,7 +9,9 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rjpks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+/* const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.x5lfl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; */
+
+ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rjpks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; 
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -21,8 +23,9 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
+      /*   const JobsCollections = client.db("jobApply").collection("allJobs"); */
 
-        const JobsCollections = client.db("job_portal_server").collection("jobs");
+         const JobsCollections = client.db("job_portal_server").collection("jobs"); 
 
         app.get("/jobs", async (req, res) => {
             const result = await JobsCollections.find().toArray()
@@ -31,12 +34,8 @@ async function run() {
 
         app.get("/jobs/:id", async (req, res) => {
             const id = req.params.id;
-            console.log(id);
-            
-            const query = { _id: new ObjectId(id) };
+            const query = { _id: id };
             const result = await JobsCollections.findOne(query);
-            console.log(result);
-            
             res.send(result);
         });
 
