@@ -82,8 +82,17 @@ async function run() {
             res.send(result);
         });
 
+        app.put("/applications/update/:id", async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = { $set: {status: status.status} }
+            const result = await ApplicationsCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        });
+
         // Get all job applications
-        app.get("/applications", async (req, res) => {
+        app.get("/applications/:id", async (req, res) => {
             const result = await ApplicationsCollection.find().toArray();
             res.send(result);
         });
