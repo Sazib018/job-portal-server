@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken")
+const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // Create an Express application
@@ -8,8 +10,14 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 // Middleware setup
-app.use(cors()); 
+app.use(cors(
+    {
+        origin:"http://localhost:5173",
+        credentials: true,
+    }
+)); 
 app.use(express.json()); 
+app.use(cookieParser());
 
 // MongoDB connection URI using credentials from environment variables
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rjpks.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -30,6 +38,18 @@ async function run() {
         const db = client.db("job_portal_server");
         const JobsCollection = db.collection("jobs");
         const ApplicationsCollection = db.collection("applications");
+
+        app.post("/jwt", (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+            res.cookie("token", token, { 
+            httpOnly: true, 
+            secure: false,
+            sameSite: 'strict',
+            maxAge: 3600000
+            });
+            res.send({ message: "Token generated and cookie set" });
+        });
 
         // ------------------- JOBS API -------------------
 
